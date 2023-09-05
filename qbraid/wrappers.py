@@ -113,7 +113,7 @@ def device_wrapper(device: str | qiskit_ibm_runtime.IBMBackend | braket.aws.AwsD
 
     Raises:
         :class:`~qbraid.QbraidError`: If ``device_id`` is not a valid device reference.
-    """
+    """ 
     return device if not isinstance(device, str) else __qbraid_id_dev_wrap(device)
 
 def job_wrapper(qbraid_job_id: str):
