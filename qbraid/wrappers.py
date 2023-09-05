@@ -101,15 +101,16 @@ def __qbraid_id_dev_wrap(device_id: str):
     device_wrapper_class = devices_entrypoints[ep].load()
     return device_wrapper_class(**device_info)
 
-def device_wrapper(device: str | qiskit_ibm_runtime.IBMBackend | braket.aws.AwsDevice ): # type: ignore
+def device_wrapper(device: str | qiskit_ibm_runtime.IBMBackend | braket.aws.AwsDevice ) -> qbraid.providers.DeviceLikeWrapper | qiskit_ibm_runtime.IBMBackend | braket.aws.AwsDevice: # type: ignore
     
     """Apply qbraid device wrapper to device from a supported device provider.
 
     Args:
-        device_id: unique ID specifying a supported quantum hardware device/simulator. It can be also a ``IBMBackend`` or a ``AwsDevice`` object.
+        device: unique ID specifying a supported quantum hardware device/simulator. It can also be a ``IBMBackend`` or a ``AwsDevice`` object.
         
     Returns:
-        :class:`~qbraid.providers.DeviceLikeWrapper`: A wrapped quantum device-like object
+        :class:`~qbraid.providers.DeviceLikeWrapper`: A wrapped quantum device-like object 
+        It can also return the `qiskit_ibm_runtime.IBMBackend` or `braket.aws.AwsDevice` object
 
     Raises:
         :class:`~qbraid.QbraidError`: If ``device_id`` is not a valid device reference.
