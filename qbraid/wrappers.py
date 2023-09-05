@@ -76,30 +76,6 @@ def circuit_wrapper(program: QPROGRAM):
     raise QbraidError(f"Error applying circuit wrapper to quantum program of type {type(program)}")
 
 
-def device_wrapper(device_id: str = None, 
-                   ibm_backend: qiskit_ibm_runtime.IBMBackend = None, #type: ignore
-                    aws_dev: braket.aws.AwsDevice = None): # type: ignore
-    
-    """Apply qbraid device wrapper to device from a supported device provider.
-
-    Args:
-        device_id: unique ID specifying a supported quantum hardware device/simulator
-        ibm_backend: a IBMBackend object
-        aws_dev: a AwsDevice object
-        
-    Returns:
-        :class:`~qbraid.providers.DeviceLikeWrapper`: A wrapped quantum device-like object
-
-    Raises:
-        :class:`~qbraid.QbraidError`: If ``device_id`` is not a valid device reference.
-        :class:`~qbraid.QbraidError`: If all the parameters are null
-
-    """
-    if not ibm_backend: return ibm_backend
-    elif not aws_dev: return aws_dev
-    elif not device_id: return __qbraid_id_dev_wrap(device_id)
-    else: raise QbraidError("No devices were specified")
-
 def __qbraid_id_dev_wrap(device_id: str):
     session = QbraidSession()
     api_endpoint = "/public/lab/get-devices"
@@ -125,6 +101,20 @@ def __qbraid_id_dev_wrap(device_id: str):
     device_wrapper_class = devices_entrypoints[ep].load()
     return device_wrapper_class(**device_info)
 
+def device_wrapper(device: str | qiskit_ibm_runtime.IBMBackend | braket.aws.AwsDevice ): # type: ignore
+    
+    """Apply qbraid device wrapper to device from a supported device provider.
+
+    Args:
+        device_id: unique ID specifying a supported quantum hardware device/simulator. It can be also a ``IBMBackend`` or a ``AwsDevice`` object.
+        
+    Returns:
+        :class:`~qbraid.providers.DeviceLikeWrapper`: A wrapped quantum device-like object
+
+    Raises:
+        :class:`~qbraid.QbraidError`: If ``device_id`` is not a valid device reference.
+    """
+    return device if not isinstance(device, str) else __qbraid_id_dev_wrap(device)
 
 def job_wrapper(qbraid_job_id: str):
     """Retrieve a job from qBraid API using job ID and return job wrapper object.
